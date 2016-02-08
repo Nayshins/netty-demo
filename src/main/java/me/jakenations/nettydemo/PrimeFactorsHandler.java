@@ -1,19 +1,21 @@
 package me.jakenations.nettydemo;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.*;
 
-public class PrimeFactorsHandler extends ChannelInboundHandlerAdapter {
+public class PrimeFactorsHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
+        System.out.println("Client received: " + fullHttpRequest.toString());
+        HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
 
-    public void channelRead(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-
+        channelHandlerContext.writeAndFlush(httpResponse);
     }
 
-    public void channelReadComplete(ChannelHandlerContext channelHandlerContext) throws Exception {
-
-    }
-
-    public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable throwable) throws Exception {
-
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
     }
 }
